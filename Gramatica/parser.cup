@@ -1,0 +1,376 @@
+package comp_proy;
+import java_cup.runtime.*;
+
+class Parser;
+
+parser code  {: 
+  public void report_error(String message, Object info) {
+    StringBuilder m = new StringBuilder(message + ": ");
+
+    if (info instanceof java_cup.runtime.Symbol) 
+      m.append( info.toString() );
+    
+    System.out.println(m);
+  }
+:};
+
+//----Terminales----
+//-Palabras clave
+terminal BREAK, CASE, DEFAULT, ELSE, IF, MAIN, NULL, RETURN, SWITCH, WHILE;
+terminal TIPO_BOOL, TIPO_CHAR, TIPO_FLOAT, TIPO_INT, TIPO_STRING;
+
+//-Entrada y salida estandar
+terminal READ_INT, READ_FLOAT;
+terminal PRINT_INT, PRINT_FLOAT, PRINT_CHAR, PRINT_STRING;
+
+//-Separadores
+terminal PAREN_A, PAREN_C, CURS_A, CURS_C, CUAD_A, CUAD_C;
+terminal HASHTAG, DOSPUNTOS, COMA;
+
+//-Operadores
+terminal IGUAL, MAS, MENOS, POR, DIV, POTENCIA, COMPLEMENTO;
+terminal AND, OR, NOT;
+terminal ESIGUAL, DIFERENTE, MAYOR, MENOR, MAYORIGUAL, MENORIGUAL;
+terminal MASMAS, MENOSMENOS;
+terminal MENOS_UNARIO;
+
+//-Literales
+terminal LIT_ENTERO;
+terminal LIT_FLOTANTE;
+terminal LIT_BOOLEANO;
+terminal LIT_CHAR;
+terminal LIT_STRING;
+
+//-Identificador
+terminal IDENTIF;
+
+
+//----No terminales----
+//-Estructura del programa
+non terminal inicio, programa, funcMain, bloqueCod;
+
+//-Funciones
+non terminal crearFuncion, crearParametros, funcReturn;
+non terminal llamarFuncion, parametros;
+
+//-Sentencias
+non terminal sentencia;
+non terminal crearVar, crearInt, crearFloat, crearBool, crearChar, crearString, crearArrayInt, crearArrayChar;
+non terminal crearAsignVar, crearAsignInt, crearAsignFloat, crearAsignBool, crearAsignChar, crearAsignString;
+non terminal asignVar;
+non terminal asignElemArreg;
+non terminal salidaEst;
+non terminal sentenciaBreak;
+
+//-Estructuras de control
+non terminal estrucControl, if, while, switch;
+non terminal casosInt, casosFloat, casosBool, casosChar, casosString, casoDefault;
+
+//-Expresiones
+non terminal expr, operando, operandoIgual;
+non terminal operandoNum;
+non terminal exprBin, operadorBin;
+non terminal exprUna, operadorUna;
+non terminal exprRel, operadorRel, operadorIgual;
+non terminal exprLog, operadorLog;
+
+//-Tipos y valores
+non terminal tipoFun, tipoVar, tipoParam;
+non terminal literal;
+non terminal tipoArreglo, elemArreglo;
+
+non terminal valorInt, valorFloat, valorChar, valorString, valorBool;
+non terminal entradaEstInt, entradaEstFloat;
+
+//----Precedencia----
+precedence left OR;
+precedence left AND;
+precedence left ESIGUAL, DIFERENTE;
+precedence left MAYOR, MENOR, MAYORIGUAL, MENORIGUAL;
+precedence left MAS, MENOS;
+precedence left POR, DIV, COMPLEMENTO;
+precedence left POTENCIA;
+precedence right NOT, MENOS_UNARIO;
+precedence left CUAD_A, CUAD_C, PAREN_A, PAREN_C, MASMAS, MENOSMENOS;
+
+
+//----Gramatica----
+start with inicio;
+
+//1		Estructura del programa
+inicio ::= programa;
+programa ::= funcMain
+			| programa crearFuncion
+			| crearFuncion programa
+;
+funcMain ::= TIPO_INT MAIN PAREN_A PAREN_C CURS_A bloqueCod funcReturn CURS_C
+;
+bloqueCod ::= sentencia
+			| estrucControl
+			| sentencia bloqueCod
+			| estrucControl bloqueCod
+;
+
+//2		Funciones
+//2.1	Definir funcion
+crearFuncion ::= tipoFun IDENTIF PAREN_A PAREN_C CURS_A bloqueCod funcReturn CURS_C
+				| tipoFun IDENTIF PAREN_A crearParametros PAREN_C CURS_A bloqueCod funcReturn CURS_C
+;
+crearParametros ::= tipoVar IDENTIF
+				| tipoVar IDENTIF COMA crearParametros
+;
+funcReturn ::= RETURN literal HASHTAG
+			| RETURN expr HASHTAG
+			| RETURN IDENTIF HASHTAG
+			| RETURN llamarFuncion HASHTAG
+;
+//2.2	Llamar funcion
+llamarFuncion ::= IDENTIF PAREN_A PAREN_C
+				| IDENTIF PAREN_A parametros PAREN_C
+				| SYSREAD PAREN_A PAREN_C
+;
+parametros ::= literal
+			| expr
+			| IDENTIF
+			| llamarFuncion
+			| literal COMA parametros
+			| expr COMA parametros
+			| IDENTIF COMA parametros
+			| llamarFuncion COMA parametros
+;
+
+//3		Sentencias
+sentencia ::= crearVar HASHTAG
+			| crearAsignVar HASHTAG
+			| asignVar HASHTAG
+			| asignElemArreg HASHTAG
+			| expr HASHTAG
+			| llamarFuncion HASHTAG
+			| salidaEst HASHTAG
+			| sentenciaBreak
+;
+
+//3.1	Crear variables
+crearVar ::= crearInt
+			| crearFloat
+			| crearBool
+			| crearChar
+			| crearString
+			| crearArrayInt
+			| crearArrayChar
+;
+crearInt		::= TIPO_INT IDENTIF;
+crearFloat		::= TIPO_FLOAT IDENTIF;
+crearBool		::= TIPO_BOOL IDENTIF;
+crearChar		::= TIPO_CHAR IDENTIF;
+crearString		::= TIPO_STRING IDENTIF;
+crearArrayInt	::= TIPO_INT IDENTIF CUAD_A valorInt CUAD_C;
+crearArrayChar	::= TIPO_CHAR IDENTIF CUAD_A valorInt CUAD_C;
+
+//3.2	Crear y asignar variables
+crearAsignVar ::= crearAsignInt
+				| crearAsignFloat
+				| crearAsignBool
+				| crearAsignChar
+				| crearAsignString
+;
+			//	| crearVar IGUAL NULL
+
+crearAsignInt		::= crearInt IGUAL valorInt;
+crearAsignFloat		::= crearFloat IGUAL valorFloat;
+crearAsignBool		::= crearBool IGUAL valorBool;
+crearAsignChar		::= crearChar IGUAL valorChar;
+crearAsignString	::= crearString IGUAL valorString;
+
+//3.3	Asignar variables
+asignVar ::= IDENTIF IGUAL valorInt
+			| IDENTIF IGUAL valorFloat
+			| IDENTIF IGUAL valorBool
+			| IDENTIF IGUAL valorChar
+			| IDENTIF IGUAL valorString
+;
+		//	| IDENTIF IGUAL NULL		
+
+asignElemArreg ::= elemArreglo IGUAL valorInt
+				| elemArreglo IGUAL valorChar
+;
+			//	| elemArreglo IGUAL NULL
+
+//3.4	Salida estandar
+salidaEst ::= PRINT_INT PAREN_A valorInt PAREN_C
+			| PRINT_FLOAT PAREN_A valorFloat PAREN_C
+			| PRINT_CHAR PAREN_A valorChar PAREN_C
+			| PRINT_STRING PAREN_A valorString PAREN_C
+;
+
+//3.5	Break
+sentenciaBreak ::= BREAK HASHTAG
+;
+
+
+//4		Estructuras de control
+estrucControl ::= if
+				| while
+				| switch
+;
+
+//4.1	If
+if ::= IF PAREN_A valorBool PAREN_C CURS_A bloqueCod CURS_C
+	| IF PAREN_A valorBool PAREN_C CURS_A bloqueCod CURS_C ELSE CURS_A bloqueCod CURS_C
+;
+
+//4.2	While
+while ::= WHILE PAREN_A valorBool PAREN_C CURS_A bloqueCod CURS_C;
+
+//4.3	Switch
+switch ::= SWITCH PAREN_A valorInt PAREN_C CURS_A casosInt casoDefault CURS_C
+		| SWITCH PAREN_A valorFloat PAREN_C CURS_A casosFloat casoDefault CURS_C
+		| SWITCH PAREN_A valorBool PAREN_C CURS_A casosBool casoDefault CURS_C
+		| SWITCH PAREN_A valorChar PAREN_C CURS_A casosChar casoDefault CURS_C
+		| SWITCH PAREN_A valorString PAREN_C CURS_A casosString casoDefault CURS_C
+;
+
+casosInt ::= CASE LIT_ENTERO DOSPUNTOS bloqueCod
+			| CASE LIT_ENTERO DOSPUNTOS bloqueCod casosInt
+;
+casosFloat ::= CASE LIT_FLOTANTE DOSPUNTOS bloqueCod
+			| CASE LIT_FLOTANTE DOSPUNTOS bloqueCod casosFloat
+;
+casosBool ::= CASE LIT_BOOLEANO DOSPUNTOS bloqueCod
+			| CASE LIT_BOOLEANO DOSPUNTOS bloqueCod casosBool
+;
+casosChar ::= CASE LIT_CHAR DOSPUNTOS bloqueCod
+			| CASE LIT_CHAR DOSPUNTOS bloqueCod casosChar
+;
+casosString ::= CASE LIT_STRING DOSPUNTOS bloqueCod
+			| CASE LIT_STRING DOSPUNTOS bloqueCod casosString
+;
+
+casoDefault ::= DEFAULT CURS_A bloqueCod CURS_C;
+
+
+//5		Expresiones
+expr ::= exprBin
+		| exprUna
+		| exprRel
+		| exprLog
+;
+
+operandoNum ::= valorInt
+			| valorFloat
+			| PAREN_A exprBin PAREN_C
+;
+operandoInt ::= valorInt
+			| PAREN_A exprBin PAREN_C
+;
+
+operando ::= literal
+			| IDENTIF
+			| llamarFuncion
+			| expr
+			| PAREN_A expr PAREN_C
+;
+operandoIgual ::= NULL;
+
+//5.1	Expresiones arit binarias
+exprBin ::= operandoNum operadorBin operandoNum;
+
+operadorBin ::= MAS
+			| MENOS
+			| DIV
+			| POR
+			| COMPLEMENTO
+			| POTENCIA
+;
+
+//5.2	Expresiones arit unarias
+exprUna ::= operandoInt operadorUna
+			| MENOS operandoNum
+			%prec MENOS_UNARIO
+;
+operadorUna ::= MENOSMENOS
+				| MASMAS
+;
+exprRel ::= operando operadorRel operando
+			| operando operadorIgual operando
+			| operando operadorIgual operandoIgual
+;
+operadorRel ::= MAYOR
+				| MENOR
+				| MAYORIGUAL
+				| MENORIGUAL
+;
+operadorIgual ::= ESIGUAL
+				| DIFERENTE
+;
+exprLog ::= operando operadorLog operando
+			| NOT operando
+;
+operadorLog ::= AND
+				| OR
+;
+
+//-Tipos y valores
+tipoFun ::= TIPO_INT
+			| TIPO_FLOAT
+			| TIPO_CHAR
+;
+tipoVar ::= TIPO_INT
+			| TIPO_FLOAT
+			| TIPO_CHAR
+			| TIPO_BOOL
+			| TIPO_STRING
+			| tipoArreglo
+;
+tipoParam ::= TIPO_INT
+			| TIPO_FLOAT
+			| TIPO_CHAR
+			| TIPO_BOOL
+			| TIPO_STRING
+			| tipoArreglo
+;
+literal ::= LIT_ENTERO
+			| LIT_FLOTANTE
+			| LIT_CHAR
+			| LIT_STRING
+			| LIT_BOOLEANO
+			| elemArreglo
+;
+tipoArreglo ::= TIPO_INT CUAD_A LIT_ENTERO CUAD_C
+			| TIPO_CHAR CUAD_A LIT_ENTERO CUAD_C
+;
+elemArreglo ::= IDENTIF CUAD_A valorInt CUAD_C
+;
+
+valorInt ::=  LIT_ENTERO
+			| IDENTIF
+			| llamarFuncion
+			| exprBin
+			| exprUna
+			| entradaEstInt
+			| elemArreglo
+;
+entradaEstInt ::= READ_INT PAREN_A PAREN_C
+;
+valorFloat ::= LIT_FLOTANTE
+			| IDENTIF
+			| llamarFuncion
+			| exprBin
+			| exprUna
+			| entradaEstFloat
+;
+entradaEstFloat ::= READ_FLOAT PAREN_A PAREN_C
+;
+valorBool ::= LIT_BOOLEANO
+			| IDENTIF
+			| exprRel
+			| exprLog
+;
+valorChar ::= LIT_CHAR
+			| IDENTIF
+			| llamarFuncion
+			| elemArreglo
+;
+valorString ::= LIT_STRING
+			| IDENTIF
+;
