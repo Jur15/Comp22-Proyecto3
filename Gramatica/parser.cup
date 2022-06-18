@@ -63,23 +63,20 @@ non terminal salidaEst;
 non terminal sentenciaBreak;
 
 //-Estructuras de control
-non terminal estrucControl, if, while, switch;
+non terminal estrucControl, condicion, if, while, switch;
 non terminal casosInt, casosFloat, casosBool, casosChar, casosString, casoDefault;
 
 //-Expresiones
-non terminal expr, operando, operandoIgual;
-non terminal operandoNum;
-non terminal exprBin, operadorBin;
-non terminal exprUna, operadorUna;
-non terminal exprRel, operadorRel, operadorIgual;
-non terminal exprLog, operadorLog;
+non terminal expr;
+non terminal exprBin, operadorBin, operandoBin;
+non terminal exprUna, operadorUna, operandoUna;
+non terminal exprRel, operadorRel, operadorIgual, operandoRel;
+non terminal exprLog, operadorLog, operandoLog;
 
 //-Tipos y valores
-non terminal tipoFun, tipoVar, tipoParam;
-non terminal literal;
-non terminal tipoArreglo, elemArreglo;
-
-non terminal valorInt, valorFloat, valorChar, valorString, valorBool;
+non terminal tipoFun, tipoVar;
+non terminal elemArreglo;
+non terminal valorInt, valorFloat, valorBool, valorChar, valorString;
 non terminal entradaEstInt, entradaEstFloat;
 
 //----Precedencia----
@@ -117,26 +114,34 @@ crearFuncion ::= tipoFun IDENTIF PAREN_A PAREN_C CURS_A bloqueCod funcReturn CUR
 				| tipoFun IDENTIF PAREN_A crearParametros PAREN_C CURS_A bloqueCod funcReturn CURS_C
 ;
 crearParametros ::= tipoVar IDENTIF
+				| TIPO_INT IDENTIF CUAD_A LIT_ENTERO CUAD_C
+				| TIPO_CHAR IDENTIF CUAD_A LIT_ENTERO CUAD_C
 				| tipoVar IDENTIF COMA crearParametros
+				| TIPO_INT IDENTIF CUAD_A LIT_ENTERO CUAD_C COMA crearParametros
+				| TIPO_CHAR IDENTIF CUAD_A LIT_ENTERO CUAD_C COMA crearParametros
 ;
-funcReturn ::= RETURN literal HASHTAG
-			| RETURN expr HASHTAG
-			| RETURN IDENTIF HASHTAG
-			| RETURN llamarFuncion HASHTAG
+funcReturn ::= RETURN valorInt HASHTAG
+			| RETURN valorFloat HASHTAG
+			| RETURN valorChar HASHTAG
+			| RETURN exprBin HASHTAG
+			| RETURN exprUna HASHTAG
 ;
 //2.2	Llamar funcion
 llamarFuncion ::= IDENTIF PAREN_A PAREN_C
 				| IDENTIF PAREN_A parametros PAREN_C
-				| SYSREAD PAREN_A PAREN_C
 ;
-parametros ::= literal
+parametros ::= valorInt
+			| valorFloat
+			| valorBool
+			| valorChar
+			| valorString
 			| expr
-			| IDENTIF
-			| llamarFuncion
-			| literal COMA parametros
+			| valorInt COMA parametros
+			| valorFloat COMA parametros
+			| valorBool COMA parametros
+			| valorChar COMA parametros
+			| valorString COMA parametros
 			| expr COMA parametros
-			| IDENTIF COMA parametros
-			| llamarFuncion COMA parametros
 ;
 
 //3		Sentencias
@@ -164,8 +169,8 @@ crearFloat		::= TIPO_FLOAT IDENTIF;
 crearBool		::= TIPO_BOOL IDENTIF;
 crearChar		::= TIPO_CHAR IDENTIF;
 crearString		::= TIPO_STRING IDENTIF;
-crearArrayInt	::= TIPO_INT IDENTIF CUAD_A valorInt CUAD_C;
-crearArrayChar	::= TIPO_CHAR IDENTIF CUAD_A valorInt CUAD_C;
+crearArrayInt	::= TIPO_INT IDENTIF CUAD_A LIT_ENTERO CUAD_C;
+crearArrayChar	::= TIPO_CHAR IDENTIF CUAD_A LIT_ENTERO CUAD_C;
 
 //3.2	Crear y asignar variables
 crearAsignVar ::= crearAsignInt
@@ -174,11 +179,19 @@ crearAsignVar ::= crearAsignInt
 				| crearAsignChar
 				| crearAsignString
 ;
-			//	| crearVar IGUAL NULL
 
-crearAsignInt		::= crearInt IGUAL valorInt;
-crearAsignFloat		::= crearFloat IGUAL valorFloat;
-crearAsignBool		::= crearBool IGUAL valorBool;
+crearAsignInt		::= crearInt IGUAL valorInt
+					| crearInt IGUAL exprBin
+					| crearInt IGUAL exprUna
+;
+crearAsignFloat		::= crearFloat IGUAL valorFloat
+					| crearFloat IGUAL exprBin
+					| crearFloat IGUAL exprUna
+;
+crearAsignBool		::= crearBool IGUAL valorBool
+					| crearBool IGUAL exprRel
+					| crearBool IGUAL exprLog
+;
 crearAsignChar		::= crearChar IGUAL valorChar;
 crearAsignString	::= crearString IGUAL valorString;
 
@@ -188,13 +201,14 @@ asignVar ::= IDENTIF IGUAL valorInt
 			| IDENTIF IGUAL valorBool
 			| IDENTIF IGUAL valorChar
 			| IDENTIF IGUAL valorString
-;
-		//	| IDENTIF IGUAL NULL		
+			| IDENTIF IGUAL expr
+;		
 
 asignElemArreg ::= elemArreglo IGUAL valorInt
+				| elemArreglo IGUAL exprBin
+				| elemArreglo IGUAL exprUna
 				| elemArreglo IGUAL valorChar
 ;
-			//	| elemArreglo IGUAL NULL
 
 //3.4	Salida estandar
 salidaEst ::= PRINT_INT PAREN_A valorInt PAREN_C
@@ -213,21 +227,25 @@ estrucControl ::= if
 				| while
 				| switch
 ;
+condicion ::= valorBool
+			| exprRel
+			| exprLog
+;
 
 //4.1	If
-if ::= IF PAREN_A valorBool PAREN_C CURS_A bloqueCod CURS_C
-	| IF PAREN_A valorBool PAREN_C CURS_A bloqueCod CURS_C ELSE CURS_A bloqueCod CURS_C
+if ::= IF PAREN_A condicion PAREN_C CURS_A bloqueCod CURS_C
+	| IF PAREN_A condicion PAREN_C CURS_A bloqueCod CURS_C ELSE CURS_A bloqueCod CURS_C
 ;
 
 //4.2	While
-while ::= WHILE PAREN_A valorBool PAREN_C CURS_A bloqueCod CURS_C;
+while ::= WHILE PAREN_A condicion PAREN_C CURS_A bloqueCod CURS_C;
 
 //4.3	Switch
-switch ::= SWITCH PAREN_A valorInt PAREN_C CURS_A casosInt casoDefault CURS_C
-		| SWITCH PAREN_A valorFloat PAREN_C CURS_A casosFloat casoDefault CURS_C
-		| SWITCH PAREN_A valorBool PAREN_C CURS_A casosBool casoDefault CURS_C
-		| SWITCH PAREN_A valorChar PAREN_C CURS_A casosChar casoDefault CURS_C
-		| SWITCH PAREN_A valorString PAREN_C CURS_A casosString casoDefault CURS_C
+switch ::= SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosInt casoDefault CURS_C
+		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosFloat casoDefault CURS_C
+		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosBool casoDefault CURS_C
+		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosChar casoDefault CURS_C
+		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosString casoDefault CURS_C
 ;
 
 casosInt ::= CASE LIT_ENTERO DOSPUNTOS bloqueCod
@@ -256,24 +274,8 @@ expr ::= exprBin
 		| exprLog
 ;
 
-operandoNum ::= valorInt
-			| valorFloat
-			| PAREN_A exprBin PAREN_C
-;
-operandoInt ::= valorInt
-			| PAREN_A exprBin PAREN_C
-;
-
-operando ::= literal
-			| IDENTIF
-			| llamarFuncion
-			| expr
-			| PAREN_A expr PAREN_C
-;
-operandoIgual ::= NULL;
-
 //5.1	Expresiones arit binarias
-exprBin ::= operandoNum operadorBin operandoNum;
+exprBin ::= operandoBin operadorBin operandoBin;
 
 operadorBin ::= MAS
 			| MENOS
@@ -282,71 +284,79 @@ operadorBin ::= MAS
 			| COMPLEMENTO
 			| POTENCIA
 ;
+operandoBin ::= valorInt
+			| valorFloat
+			| exprBin 
+			| exprUna
+			| PAREN_A exprBin PAREN_C
+;
 
 //5.2	Expresiones arit unarias
-exprUna ::= operandoInt operadorUna
-			| MENOS operandoNum
-			%prec MENOS_UNARIO
+exprUna ::= operandoUna operadorUna
+		| MENOS operandoUna
+		%prec MENOS_UNARIO
+		| MENOS valorFloat
+		%prec MENOS_UNARIO
 ;
 operadorUna ::= MENOSMENOS
-				| MASMAS
+			| MASMAS
 ;
-exprRel ::= operando operadorRel operando
-			| operando operadorIgual operando
-			| operando operadorIgual operandoIgual
+operandoUna ::= valorInt
+			| PAREN_A exprBin PAREN_C
+;
+
+//5.3	Expresiones relacionales
+exprRel ::= operandoRel operadorRel operandoRel
+		| operandoRel operadorIgual operandoRel
+		| operandoLog operadorIgual operandoLog
 ;
 operadorRel ::= MAYOR
-				| MENOR
-				| MAYORIGUAL
-				| MENORIGUAL
+			| MENOR
+			| MAYORIGUAL
+			| MENORIGUAL
 ;
 operadorIgual ::= ESIGUAL
 				| DIFERENTE
 ;
-exprLog ::= operando operadorLog operando
-			| NOT operando
-;
-operadorLog ::= AND
-				| OR
+operandoRel ::= valorInt
+			| valorFloat
+			| PAREN_A exprBin PAREN_C
+			| exprUna
 ;
 
-//-Tipos y valores
+//5.4	Expresiones logicas
+exprLog ::= operandoLog operadorLog operandoLog
+		| NOT valorBool
+		| NOT PAREN_A exprRel PAREN_C
+		| NOT PAREN_A exprLog PAREN_C
+;
+operadorLog ::= AND
+			| OR
+;
+operandoLog ::= valorBool
+			| exprRel
+			| exprLog
+			| PAREN_A exprRel PAREN_C
+			| PAREN_A exprLog PAREN_C
+;
+
+//6		Tipos y valores
 tipoFun ::= TIPO_INT
-			| TIPO_FLOAT
-			| TIPO_CHAR
+		| TIPO_FLOAT
+		| TIPO_CHAR
 ;
 tipoVar ::= TIPO_INT
-			| TIPO_FLOAT
-			| TIPO_CHAR
-			| TIPO_BOOL
-			| TIPO_STRING
-			| tipoArreglo
+		| TIPO_FLOAT
+		| TIPO_BOOL
+		| TIPO_CHAR
+		| TIPO_STRING
 ;
-tipoParam ::= TIPO_INT
-			| TIPO_FLOAT
-			| TIPO_CHAR
-			| TIPO_BOOL
-			| TIPO_STRING
-			| tipoArreglo
-;
-literal ::= LIT_ENTERO
-			| LIT_FLOTANTE
-			| LIT_CHAR
-			| LIT_STRING
-			| LIT_BOOLEANO
-			| elemArreglo
-;
-tipoArreglo ::= TIPO_INT CUAD_A LIT_ENTERO CUAD_C
-			| TIPO_CHAR CUAD_A LIT_ENTERO CUAD_C
-;
-elemArreglo ::= IDENTIF CUAD_A valorInt CUAD_C
+elemArreglo ::= IDENTIF CUAD_A LIT_ENTERO CUAD_C
 ;
 
 valorInt ::=  LIT_ENTERO
 			| IDENTIF
 			| llamarFuncion
-			| exprBin
-			| exprUna
 			| entradaEstInt
 			| elemArreglo
 ;
@@ -355,16 +365,12 @@ entradaEstInt ::= READ_INT PAREN_A PAREN_C
 valorFloat ::= LIT_FLOTANTE
 			| IDENTIF
 			| llamarFuncion
-			| exprBin
-			| exprUna
 			| entradaEstFloat
 ;
 entradaEstFloat ::= READ_FLOAT PAREN_A PAREN_C
 ;
 valorBool ::= LIT_BOOLEANO
 			| IDENTIF
-			| exprRel
-			| exprLog
 ;
 valorChar ::= LIT_CHAR
 			| IDENTIF

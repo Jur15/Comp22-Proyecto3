@@ -2,49 +2,49 @@
 <NotepadPlus>
     <Session activeView="0">
         <mainView activeIndex="1">
-            <File firstVisibleLine="80" xOffset="0" scrollWidth="1" startPos="2370" endPos="2382" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Gramatica\lexer.jflex" backupFilePath="" originalFileLastModifTimestamp="1129614684" originalFileLastModifTimestampHigh="30964913" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
-            <File firstVisibleLine="251" xOffset="0" scrollWidth="500" startPos="7386" endPos="7386" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Gramatica\parser.cup" backupFilePath="" originalFileLastModifTimestamp="-1565511925" originalFileLastModifTimestampHigh="30965468" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no">
-                <Mark line="99" />
-                <Mark line="113" />
-                <Mark line="114" />
-                <Mark line="126" />
-                <Mark line="141" />
-                <Mark line="152" />
-                <Mark line="169" />
-                <Mark line="184" />
+            <File firstVisibleLine="78" xOffset="0" scrollWidth="990" startPos="2370" endPos="2382" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Gramatica\lexer.jflex" backupFilePath="" originalFileLastModifTimestamp="1129614684" originalFileLastModifTimestampHigh="30964913" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
+            <File firstVisibleLine="62" xOffset="0" scrollWidth="1100" startPos="8289" endPos="8300" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Gramatica\parser.cup" backupFilePath="" originalFileLastModifTimestamp="-588252391" originalFileLastModifTimestampHigh="30965995" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no">
+                <Mark line="96" />
+                <Mark line="110" />
+                <Mark line="111" />
+                <Mark line="128" />
+                <Mark line="147" />
+                <Mark line="158" />
+                <Mark line="175" />
                 <Mark line="198" />
-                <Mark line="205" />
-                <Mark line="210" />
-                <Mark line="216" />
-                <Mark line="221" />
-                <Mark line="224" />
-                <Mark line="251" />
-                <Mark line="274" />
+                <Mark line="213" />
+                <Mark line="218" />
+                <Mark line="225" />
+                <Mark line="235" />
+                <Mark line="240" />
+                <Mark line="243" />
+                <Mark line="270" />
+                <Mark line="277" />
             </File>
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="1000" startPos="607" endPos="611" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\Prueba 3.txt" backupFilePath="" originalFileLastModifTimestamp="1563645824" originalFileLastModifTimestampHigh="30961237" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="1000" startPos="0" endPos="0" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\ejemplo co&#x0301;digo 1 - correjido.txt" backupFilePath="" originalFileLastModifTimestamp="1747604472" originalFileLastModifTimestampHigh="30960345" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="1000" startPos="0" endPos="0" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\ejemplo co&#x0301;digo 1.txt" backupFilePath="" originalFileLastModifTimestamp="-1751961744" originalFileLastModifTimestampHigh="30960128" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="1000" startPos="411" endPos="416" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\ejemplo c&#x00F3;digo 2.txt" backupFilePath="" originalFileLastModifTimestamp="699566803" originalFileLastModifTimestampHigh="30960571" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="1000" startPos="99" endPos="99" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\PuntosExtra1.txt" backupFilePath="" originalFileLastModifTimestamp="-709395423" originalFileLastModifTimestampHigh="30964660" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1100" startPos="569" endPos="569" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\Prueba 3.txt" backupFilePath="" originalFileLastModifTimestamp="1563645824" originalFileLastModifTimestampHigh="30961237" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1100" startPos="0" endPos="0" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\ejemplo co&#x0301;digo 1.txt" backupFilePath="" originalFileLastModifTimestamp="-1751961744" originalFileLastModifTimestampHigh="30960128" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1100" startPos="683" endPos="683" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\ejemplo c&#x00F3;digo 2.txt" backupFilePath="" originalFileLastModifTimestamp="-334003259" originalFileLastModifTimestampHigh="30965984" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1100" startPos="99" endPos="99" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Pruebas\PuntosExtra1.txt" backupFilePath="" originalFileLastModifTimestamp="-709395423" originalFileLastModifTimestampHigh="30964660" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
+            <File firstVisibleLine="191" xOffset="0" scrollWidth="1100" startPos="0" endPos="0" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\TEC\2022-I S\Comp\Proyecto 1\jflex-1.8.2\examples\cup-lcalc\src\main\cup\ycalc.cup" backupFilePath="" originalFileLastModifTimestamp="-753084672" originalFileLastModifTimestampHigh="30810356" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
         </mainView>
         <subView activeIndex="0">
-            <File firstVisibleLine="68" xOffset="0" scrollWidth="1000" startPos="2685" endPos="2697" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Gramatica\parser.cup" backupFilePath="" originalFileLastModifTimestamp="-1565511925" originalFileLastModifTimestampHigh="30965468" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no">
-                <Mark line="99" />
-                <Mark line="113" />
-                <Mark line="114" />
-                <Mark line="126" />
-                <Mark line="141" />
-                <Mark line="152" />
-                <Mark line="169" />
-                <Mark line="184" />
+            <File firstVisibleLine="348" xOffset="0" scrollWidth="1100" startPos="9366" endPos="9375" selMode="0" offset="0" wrapCount="1" lang="None (Normal Text)" encoding="-1" userReadOnly="no" filename="C:\Users\moral\Documents\GitHub\Comp22-Proyecto3\Gramatica\parser.cup" backupFilePath="" originalFileLastModifTimestamp="-588252391" originalFileLastModifTimestampHigh="30965995" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no">
+                <Mark line="96" />
+                <Mark line="110" />
+                <Mark line="111" />
+                <Mark line="128" />
+                <Mark line="147" />
+                <Mark line="158" />
+                <Mark line="175" />
                 <Mark line="198" />
-                <Mark line="205" />
-                <Mark line="210" />
-                <Mark line="216" />
-                <Mark line="221" />
-                <Mark line="224" />
-                <Mark line="251" />
-                <Mark line="274" />
+                <Mark line="213" />
+                <Mark line="218" />
+                <Mark line="225" />
+                <Mark line="235" />
+                <Mark line="240" />
+                <Mark line="243" />
+                <Mark line="270" />
+                <Mark line="277" />
             </File>
         </subView>
     </Session>

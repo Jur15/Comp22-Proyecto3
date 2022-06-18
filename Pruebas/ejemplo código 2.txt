@@ -1,7 +1,20 @@
+int main(){
+	char miChar = '!'#
+	miFunc (hola, 'a')#
+	float fl1#
+	int arr[10]#
+	arr[0] = 5 * 5#
+	arr[1] = 10 - arr[0] * miFunc (hola, 'a')#
+	fl1 = 4.5~miChar^-0.005#
+	int in1 = fl1-- * -14 / in1++ + 7#
+	bool bl1 = in1 >= fl1 & false | not(func1(3,miVar) > 56)#
+	return bl1#
+}
+
 float miFunc (int dif, char otra){
-	int a#
+	int a;
 	string str = "Hola $%&/#$&) mundo" #
-	//return 1#
+	return 1#
 	int var = 34 + id * miFunc2 (func3(34,id))#
 	if ((var+23) > 45 & true | otra == dif)
 	{
@@ -9,21 +22,18 @@ float miFunc (int dif, char otra){
 		{
 			dif = str++#
 		}
-		if (var < 4)
+		if (var)
 		{
 			print("entra al if")#
 			switch(otra)
 			{
-				case: 1 {
-					print("!#")# 
-					}
-				case: 2 {
+				case 1:
+					print("!#")#
+				case 2:
 					otra = 10#
-					//break#
-					}
-				default {
+					break#
+				default:
 					otra = -10.5 * -1.9#
-					}
 			}
 		}
 		else
@@ -37,17 +47,4 @@ float miFunc (int dif, char otra){
 
 char miOtraFun(){
 	return -5.6#
-}
-
-int main(){
-	char miChar = '!'#
-	miFunc (hola, 'a')#
-	float fl1#
-	int[] arr = int[10]#
-	arr[0] = 5 * 5#
-	arr[1] = 10 - arr[0] * miFunc (hola, 'a')#
-	fl1 = 4.5~miChar^-0.005#
-	int in1 = fl1-- * -14 / in1++ + 7#
-	bool bl1 = in1 >= fl1 & false | not(func1(3,miVar) > 56)#
-	return bl1#
 }
