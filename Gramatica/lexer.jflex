@@ -72,6 +72,7 @@ CaracterChar = [^\r\n\'\\]
 	"return" 	{return symbol(ParserSym.RETURN);}
 	"switch" 	{return symbol(ParserSym.SWITCH);}
 	"while"  	{return symbol(ParserSym.WHILE);}
+	
 	//Tipos
 	"bool"		{return symbol(ParserSym.TIPO_BOOL);}
 	"char"		{return symbol(ParserSym.TIPO_CHAR);}
@@ -80,12 +81,9 @@ CaracterChar = [^\r\n\'\\]
 	"string"	{return symbol(ParserSym.TIPO_STRING);}
 	
 	//Entrada y salida estandar
-	"readInt"		{return symbol(ParserSym.READ_INT);}
-	"readFloat"		{return symbol(ParserSym.READ_FLOAT);
-	"printInt"		{return symbol(ParserSym.PRINT_INT);}
-	"printFloat"	{return symbol(ParserSym.PRINT_FLOAT);}
-	"printChar"		{return symbol(ParserSym.PRINT_CHAR);}
-	"printString"	{return symbol(ParserSym.PRINT_STRING);}
+	"readInt"	{return symbol(ParserSym.READ_INT);}
+	"readFloat"	{return symbol(ParserSym.READ_FLOAT);}
+	"print"		{return symbol(ParserSym.PRINT);}
 	
 	//Separadores
 	"("			{return symbol(ParserSym.PAREN_A);}
@@ -128,11 +126,10 @@ CaracterChar = [^\r\n\'\\]
 	"false"		{return symbol(ParserSym.LIT_BOOLEANO, false);}
 	
 	//-Chars (Cambio de seccion)
-	\'			{yybegin(CHAR);}
+	\' 			{yybegin(CHAR);}
 	
 	//-Strings (Cambio de seccion)
-	\"			{yybegin(STRING); string.setLength(0);}
-	
+	\" 			{yybegin(STRING); string.setLength(0);}
 	
 	//Identificador
 	{Identificador} 	{return symbol(ParserSym.IDENTIF, yytext());}
@@ -192,7 +189,7 @@ CaracterChar = [^\r\n\'\\]
 }
 
 //Error: caracter invalido
-[^]		{throw new RuntimeException("Caracter ilegal <" + yytext() + "> en la linea " + yyline + ", columna " + yycolumn);}
+[^]		{throw new RuntimeException("Caracter ilegal <" + yytext() + "> en la linea " + yyline);}
 
 //Fin del archivo
-<<EOF>>					{return symbol(ParserSym.EOF); }
+<<EOF>>					{return symbol(ParserSym.EOF);}
