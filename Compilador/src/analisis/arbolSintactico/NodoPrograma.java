@@ -1,16 +1,16 @@
 package analisis.arbolSintactico;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author moral
  */
-public class NodoPrograma {
+public class NodoPrograma extends NodoSintactico {
 
-    public ArrayList<NodoSintactico> hijos;
+    public NodoFuncMain funcMain;
+    public NodoFuncUsuario funcUsuario;
 
-    public NodoPrograma() {
-        hijos = new ArrayList<>();
+    public NodoPrograma(NodoFuncMain funcMain, NodoFuncUsuario funcUsuario) {
+        this.funcMain = funcMain;
+        this.funcUsuario = funcUsuario;
     }
 }

@@ -1,5 +1,6 @@
-package compilador;
+package analisis;
 import java_cup.runtime.*;
+import analisis.excepcion.LexicalException;
 
 %%
 
@@ -189,7 +190,7 @@ CaracterChar = [^\r\n\'\\]
 }
 
 //Error: caracter invalido
-[^]		{throw new RuntimeException("Caracter ilegal <" + yytext() + "> en la linea " + yyline);}
+[^]		{throw new RuntimeException("Caracter ilegal <" + yytext() + "> en la linea " + (yyline+1));}
 
 //Fin del archivo
 <<EOF>>					{return symbol(ParserSym.EOF);}

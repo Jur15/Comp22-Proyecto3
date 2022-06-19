@@ -1,16 +1,14 @@
-package comp_proy;
+package analisis;
 import java_cup.runtime.*;
 
 class Parser;
 
 parser code  {: 
-  public void report_error(String message, Object info) {
-    StringBuilder m = new StringBuilder(message + ": ");
-
-    if (info instanceof java_cup.runtime.Symbol) 
-      m.append( info.toString() );
-    
-    System.out.println(m);
+	public void report_error(String message, Object info) {
+		StringBuilder m = new StringBuilder("Error sintactico: ");
+		if (info instanceof java_cup.runtime.Symbol) 
+			m.append( info.toString() );
+		System.out.println(m);
   }
 :};
 
@@ -47,7 +45,7 @@ terminal IDENTIF;
 
 //----No terminales----
 //-Estructura del programa
-non terminal inicio, programa, funcMain, bloqueCod;
+non terminal inicio, programa, funcMain, funcUsuario, bloqueCod;
 
 //-Funciones
 non terminal crearFuncion, crearParametro, crearParametros;
@@ -97,10 +95,13 @@ start with inicio;
 //1		Estructura del programa
 inicio ::= programa;
 programa ::= funcMain
-			| crearFuncion programa
+			| funcMain funcUsuario
 ;
-funcMain ::= TIPO_INT MAIN PAREN_A PAREN_C CURS_A bloqueCod CURS_C
+funcMain ::= TIPO_INT MAIN PAREN_A PAREN_C CURS_A bloqueCod CURS_C;
+funcUsuario ::= crearFuncion
+			| crearFuncion funcUsuario
 ;
+
 bloqueCod ::= sentencia
 			| estrucControl
 			| sentencia bloqueCod
@@ -152,7 +153,7 @@ sentencia ::= crearVar HASHTAG
 			| salidaEst HASHTAG
 			| BREAK HASHTAG
 			| sentenciaReturn HASHTAG
-			| error HASHTAG {: System.out.println("Error semántico en sentencia":}
+			| error HASHTAG {: System.out.println("Recuperado de error semántico en sentencia."); :}
 ;
 
 //3.1	Crear variables
@@ -247,14 +248,14 @@ salidaEst ::= PRINT PAREN_A valorInt PAREN_C
 ;
 
 //3.5	Return
-sentenciaReturn ::= RETURN valorInt HASHTAG
-				| RETURN valorFloat HASHTAG
-				| RETURN LIT_CHAR HASHTAG
-				| RETURN IDENTIF HASHTAG
-				| RETURN llamarFuncion HASHTAG
-				| RETURN elemArreglo HASHTAG
-				| RETURN exprBin HASHTAG
-				| RETURN exprUna HASHTAG
+sentenciaReturn ::= RETURN valorInt
+				| RETURN valorFloat
+				| RETURN LIT_CHAR
+				| RETURN IDENTIF
+				| RETURN llamarFuncion
+				| RETURN elemArreglo
+				| RETURN exprBin
+				| RETURN exprUna
 ;
 
 //4		Estructuras de control
@@ -300,7 +301,7 @@ casosString ::= CASE LIT_STRING DOSPUNTOS bloqueCod
 			| CASE LIT_STRING DOSPUNTOS bloqueCod casosString
 ;
 
-casoDefault ::= DEFAULT CURS_A bloqueCod CURS_C;
+casoDefault ::= DEFAULT DOSPUNTOS bloqueCod;
 
 
 //5		Expresiones
