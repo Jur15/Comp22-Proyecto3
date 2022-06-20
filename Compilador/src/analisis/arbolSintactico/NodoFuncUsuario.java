@@ -4,7 +4,7 @@ package analisis.arbolSintactico;
  *
  * @author moral
  */
-public class NodoFuncUsuario {
+public class NodoFuncUsuario extends NodoSintactico {
     public NodoCrearFuncion funcion;
     public NodoFuncUsuario funcUsuario;
 

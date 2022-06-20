@@ -1,5 +1,6 @@
 package analisis;
 import java_cup.runtime.*;
+import analisis.arbolSintactico.*;
 
 class Parser;
 
@@ -9,7 +10,9 @@ parser code  {:
 		if (info instanceof java_cup.runtime.Symbol) 
 			m.append( info.toString() );
 		System.out.println(m);
-  }
+	}
+  
+	public NodoPrograma raiz;
 :};
 
 //----Terminales----
@@ -33,48 +36,74 @@ terminal MASMAS, MENOSMENOS;
 terminal MENOS_UNARIO;
 
 //-Literales
-terminal LIT_ENTERO;
-terminal LIT_FLOTANTE;
-terminal LIT_BOOLEANO;
-terminal LIT_CHAR;
-terminal LIT_STRING;
+terminal Integer LIT_ENTERO;
+terminal Float LIT_FLOTANTE;
+terminal boolean LIT_BOOLEANO;
+terminal char LIT_CHAR;
+terminal String LIT_STRING;
 
 //-Identificador
-terminal IDENTIF;
+terminal String IDENTIF;
 
 
 //----No terminales----
 //-Estructura del programa
-non terminal inicio, programa, funcMain, funcUsuario, bloqueCod;
+non terminal inicio;
+non terminal NodoPrograma programa;
+non terminal NodoFuncMain funcMain;
+non terminal NodoFuncUsuario funcUsuario;
+non terminal NodoBloqueCod bloqueCod;
 
 //-Funciones
-non terminal crearFuncion, crearParametro, crearParametros;
-non terminal llamarFuncion, parametro, parametros;
+non terminal NodoCrearFuncion crearFuncion;
+non terminal NodoCrearParametro crearParametro;
+non terminal NodoCrearParametros crearParametros;
+non terminal NodoLlamarFuncion llamarFuncion;
+non terminal NodoParametro parametro;
+non terminal NodoParametros parametros;
 
 //-Sentencias
-non terminal sentencia;
-non terminal crearVar, crearInt, crearFloat, crearBool, crearChar, crearString, crearArrayInt, crearArrayChar;
-non terminal crearAsignVar, crearAsignInt, crearAsignFloat, crearAsignBool, crearAsignChar, crearAsignString;
-non terminal asignVar;
-non terminal asignElemArreg;
-non terminal salidaEst;
-non terminal sentenciaReturn;
+non terminal NodoSentencia sentencia;
+non terminal NodoCrearVar crearVar, crearInt, crearFloat, crearBool, crearChar, crearString, crearArrayInt, crearArrayChar;
+non terminal NodoCrearAsignVar crearAsignVar, crearAsignInt, crearAsignFloat, crearAsignBool, crearAsignChar, crearAsignString;
+non terminal NodoAsignVar asignVar;
+non terminal NodoAsignElemArreg asignElemArreg;
+non terminal NodoSalidaEst salidaEst;
+non terminal NodoReturn sentenciaReturn;
 
 //-Estructuras de control
-non terminal estrucControl, condicion, if, while, switch;
-non terminal casosInt, casosFloat, casosBool, casosChar, casosString, casoDefault;
+non terminal NodoSintactico estrucControl;
+non terminal NodoCondicion condicion;
+non terminal NodoSintactico if;
+non terminal NodoEstrucWhile while;
+non terminal NodoEstrucSwitch switch;
+non terminal NodoCasosInt casosInt;
+non terminal NodoCasosFloat casosFloat;
+non terminal NodoCasosBool casosBool;
+non terminal NodoCasosChar casosChar;
+non terminal NodoCasosString casosString;
+non terminal NodoCasoDefault casoDefault;
 
 //-Expresiones
-non terminal expr;
-non terminal exprBin, operadorBin, operandoBin;
-non terminal exprUna, operadorUna, operandoUna;
-non terminal exprRel, operadorRel, operandoRel;
-non terminal exprLog, operadorLog, operandoLog;
+non terminal NodoSintactico expr;
+non terminal NodoExprBin exprBin;
+non terminal NodoOperadorBin operadorBin;
+non terminal Object operandoBin;
+non terminal NodoExprUna exprUna;
+non terminal NodoOperadorUna operadorUna;
+non terminal Object operandoUna;
+non terminal NodoExprRel exprRel;
+non terminal NodoOperadorRel operadorRel;
+non terminal Object operandoRel;
+non terminal NodoExprLog exprLog;
+non terminal NodoOperadorLog operadorLog;
+non terminal Object operandoLog;
 
 //-Tipos y valores
-non terminal tipoFun;
-non terminal elemArreglo;
-non terminal valorInt, valorFloat;
+non terminal String tipoFun;
+non terminal NodoElemArreg elemArreglo;
+non terminal NodoValorInt valorInt;
+non terminal NodoValorFloat valorFloat;
 non terminal entradaEstInt, entradaEstFloat;
 
 //----Precedencia----
@@ -93,317 +122,550 @@ precedence left CUAD_A, CUAD_C, PAREN_A, PAREN_C, MASMAS, MENOSMENOS;
 start with inicio;
 
 //1		Estructura del programa
-inicio ::= programa;
-programa ::= funcMain
-			| funcMain funcUsuario
+inicio ::= programa:p
+		   {: raiz = p; :}
 ;
-funcMain ::= TIPO_INT MAIN PAREN_A PAREN_C CURS_A bloqueCod CURS_C;
-funcUsuario ::= crearFuncion
-			| crearFuncion funcUsuario
+programa ::= funcMain:m
+			{: RESULT = new NodoPrograma(m); :}
+			| funcMain:m funcUsuario:f
+			{: RESULT = new NodoPrograma(m,f); :}
+;
+funcMain ::= TIPO_INT MAIN PAREN_A PAREN_C CURS_A bloqueCod:b CURS_C
+			 {: RESULT = new NodoFuncMain(b); :}
+;
+funcUsuario ::= crearFuncion:c
+			{: RESULT = new NodoFuncUsuario(c); :}
+			| crearFuncion:c funcUsuario:f
+			{: RESULT = new NodoFuncUsuario(c,f); :}
 ;
 
-bloqueCod ::= sentencia
-			| estrucControl
-			| sentencia bloqueCod
-			| estrucControl bloqueCod
+bloqueCod ::= sentencia:s
+			{: RESULT = new NodoBloqueCod(s); :}
+			| estrucControl:e
+			{: RESULT = new NodoBloqueCod(e); :}
+			| sentencia:s bloqueCod:b
+			{: RESULT = new NodoBloqueCod(s,b); :}
+			| estrucControl:e bloqueCod:b
+			{: RESULT = new NodoBloqueCod(e,b); :}
 ;
 
 //2		Funciones
 //2.1	Definir funcion
-crearFuncion ::= tipoFun IDENTIF PAREN_A PAREN_C CURS_A bloqueCod CURS_C
-				| tipoFun IDENTIF PAREN_A crearParametros PAREN_C CURS_A bloqueCod CURS_C
+crearFuncion ::= tipoFun:t IDENTIF:i PAREN_A PAREN_C CURS_A bloqueCod:b CURS_C
+				{: RESULT = new NodoCrearFuncion(t,i,b); :}
+				| tipoFun:t IDENTIF:i PAREN_A crearParametros:p PAREN_C CURS_A bloqueCod:b CURS_C
+				{: RESULT = new NodoCrearFuncion(t,i,p,b); :}
 ;
-crearParametro ::= TIPO_INT IDENTIF
-				| TIPO_FLOAT IDENTIF
-				| TIPO_BOOL IDENTIF
-				| TIPO_CHAR IDENTIF
-				| TIPO_STRING IDENTIF
-				| TIPO_INT IDENTIF CUAD_A LIT_ENTERO CUAD_C
-				| TIPO_CHAR IDENTIF CUAD_A LIT_ENTERO CUAD_C
+crearParametro ::= TIPO_INT IDENTIF:i
+				{: RESULT = new NodoCrearParametro("int",i); :}
+				| TIPO_FLOAT IDENTIF:i
+				{: RESULT = new NodoCrearParametro("float",i); :}
+				| TIPO_BOOL IDENTIF:i
+				{: RESULT = new NodoCrearParametro("boolean",i); :}
+				| TIPO_CHAR IDENTIF:i
+				{: RESULT = new NodoCrearParametro("char",i); :}
+				| TIPO_STRING IDENTIF:i
+				{: RESULT = new NodoCrearParametro("String",i); :}
+				| TIPO_INT IDENTIF:i CUAD_A LIT_ENTERO:t CUAD_C
+				{: RESULT = new NodoCrearParametro("int",i,t); :}
+				| TIPO_CHAR IDENTIF:i CUAD_A LIT_ENTERO:t CUAD_C
+				{: RESULT = new NodoCrearParametro("char",i,t); :}
 ;
-crearParametros ::= crearParametro
-				| crearParametro COMA crearParametros
+crearParametros ::= crearParametro:p
+				{: RESULT = new NodoCrearParametros(p); :}
+				| crearParametro:p COMA crearParametros:c
+				{: RESULT = new NodoCrearParametros(p,c); :}
 ;
 //2.2	Llamar funcion
-llamarFuncion ::= IDENTIF PAREN_A PAREN_C
-				| IDENTIF PAREN_A parametros PAREN_C
+llamarFuncion ::= IDENTIF:i PAREN_A PAREN_C
+				{: RESULT = new NodoLlamarFuncion(i); :}
+				| IDENTIF:i PAREN_A parametros:p PAREN_C
+				{: RESULT = new NodoLlamarFuncion(i,p); :}
 ;
-parametro ::= valorInt
-			| valorFloat
-			| LIT_BOOLEANO
-			| LIT_CHAR
-			| LIT_STRING
-			| IDENTIF
-			| llamarFuncion
-			| elemArreglo
-			| expr
+parametro ::= valorInt:v
+			{: RESULT = new NodoParametro(v); :}
+			| valorFloat:v
+			{: RESULT = new NodoParametro(v); :}
+			| LIT_BOOLEANO:v
+			{: RESULT = new NodoParametro(v); :}
+			| LIT_CHAR:v
+			{: RESULT = new NodoParametro(v); :}
+			| LIT_STRING:v
+			{: RESULT = new NodoParametro(v); :}
+			| IDENTIF:v
+			{: RESULT = new NodoParametro(v); :}
+			| llamarFuncion:v
+			{: RESULT = new NodoParametro(v); :}
+			| elemArreglo:v
+			{: RESULT = new NodoParametro(v); :}
+			| expr:v
+			{: RESULT = new NodoParametro(v); :}
 ;
-parametros ::= parametro
-			| parametro COMA parametros
+parametros ::= parametro:p
+			{: RESULT = new NodoParametros(p); :}
+			| parametro:p COMA parametros:s
+			{: RESULT = new NodoParametros(p,s); :}
 ;
 
 
 //3		Sentencias
-sentencia ::= crearVar HASHTAG
-			| crearAsignVar HASHTAG
-			| asignVar HASHTAG
-			| asignElemArreg HASHTAG
-			| expr HASHTAG
-			| llamarFuncion HASHTAG
-			| salidaEst HASHTAG
+sentencia ::= crearVar:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
+			| crearAsignVar:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
+			| asignVar:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
+			| asignElemArreg:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
+			| expr:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
+			| llamarFuncion:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
+			| salidaEst:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
 			| BREAK HASHTAG
-			| sentenciaReturn HASHTAG
-			| error HASHTAG {: System.out.println("Recuperado de error semántico en sentencia."); :}
+			{: RESULT = new NodoSentencia(new NodoBreak()); :}
+			| sentenciaReturn:n HASHTAG
+			{: RESULT = new NodoSentencia(n); :}
+			| error HASHTAG
+			{: System.out.println("Recuperado de error semántico en sentencia.");
+			   RESULT = null; :}
 ;
 
 //3.1	Crear variables
-crearVar ::= crearInt
-			| crearFloat
-			| crearBool
-			| crearChar
-			| crearString
-			| crearArrayInt
-			| crearArrayChar
+crearVar ::= crearInt:c
+			{: RESULT = c; :}
+			| crearFloat:c
+			{: RESULT = c; :}
+			| crearBool:c
+			{: RESULT = c; :}
+			| crearChar:c
+			{: RESULT = c; :}
+			| crearString:c
+			{: RESULT = c; :}
+			| crearArrayInt:c
+			{: RESULT = c; :}
+			| crearArrayChar:c
+			{: RESULT = c; :}
 ;
-crearInt		::= TIPO_INT IDENTIF;
-crearFloat		::= TIPO_FLOAT IDENTIF;
-crearBool		::= TIPO_BOOL IDENTIF;
-crearChar		::= TIPO_CHAR IDENTIF;
-crearString		::= TIPO_STRING IDENTIF;
-crearArrayInt	::= TIPO_INT IDENTIF CUAD_A LIT_ENTERO CUAD_C;
-crearArrayChar	::= TIPO_CHAR IDENTIF CUAD_A LIT_ENTERO CUAD_C;
+crearInt		::= TIPO_INT IDENTIF:i
+					{: RESULT = new NodoCrearVar("int",i); :}
+;
+crearFloat		::= TIPO_FLOAT IDENTIF:i
+					{: RESULT = new NodoCrearVar("float",i); :}
+;
+crearBool		::= TIPO_BOOL IDENTIF:i
+					{: RESULT = new NodoCrearVar("boolean",i); :}
+;
+crearChar		::= TIPO_CHAR IDENTIF:i
+					{: RESULT = new NodoCrearVar("char",i); :}
+;
+crearString		::= TIPO_STRING IDENTIF:i
+					{: RESULT = new NodoCrearVar("String",i); :}
+;
+crearArrayInt	::= TIPO_INT IDENTIF:i CUAD_A LIT_ENTERO:t CUAD_C
+					{: RESULT = new NodoCrearVar("int",i,t); :}
+;
+crearArrayChar	::= TIPO_CHAR IDENTIF:i CUAD_A LIT_ENTERO:t CUAD_C
+					{: RESULT = new NodoCrearVar("char",i,t); :}
+;
 
 //3.2	Crear y asignar variables
-crearAsignVar ::= crearAsignInt
-				| crearAsignFloat
-				| crearAsignBool
-				| crearAsignChar
-				| crearAsignString
+crearAsignVar ::= crearAsignInt:c
+				{: RESULT = c; :}
+				| crearAsignFloat:c
+				{: RESULT = c; :}
+				| crearAsignBool:c
+				{: RESULT = c; :}
+				| crearAsignChar:c
+				{: RESULT = c; :}
+				| crearAsignString:c
+				{: RESULT = c; :}
 ;
-crearAsignInt ::= crearInt IGUAL valorInt
-				| crearInt IGUAL IDENTIF
-				| crearInt IGUAL llamarFuncion
-				| crearInt IGUAL elemArreglo
-				| crearInt IGUAL exprBin
-				| crearInt IGUAL exprUna
-				| crearInt IGUAL NULL
+
+crearAsignInt ::= crearInt:c IGUAL valorInt:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearInt:c IGUAL IDENTIF:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearInt:c IGUAL llamarFuncion:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearInt:c IGUAL elemArreglo:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearInt:c IGUAL exprBin:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearInt:c IGUAL exprUna:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearInt:c IGUAL NULL
+				{: RESULT = new NodoCrearAsignVar(c,null); :}
 ;
-crearAsignFloat ::= crearFloat IGUAL valorFloat
-				| crearFloat IGUAL IDENTIF
-				| crearFloat IGUAL llamarFuncion
-				| crearFloat IGUAL exprBin
-				| crearFloat IGUAL exprUna
-				| crearFloat IGUAL NULL
+crearAsignFloat ::= crearFloat:c IGUAL valorFloat:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearFloat:c IGUAL IDENTIF:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearFloat:c IGUAL llamarFuncion:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearFloat:c IGUAL exprBin:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearFloat:c IGUAL exprUna:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearFloat:c IGUAL NULL
+				{: RESULT = new NodoCrearAsignVar(c,null); :}
 ;
-crearAsignBool ::= crearBool IGUAL LIT_BOOLEANO
-				| crearBool IGUAL IDENTIF
-				| crearBool IGUAL exprRel
-				| crearBool IGUAL exprLog
-				| crearBool IGUAL NULL
+crearAsignBool ::= crearBool:c IGUAL LIT_BOOLEANO:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearBool:c IGUAL IDENTIF:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearBool:c IGUAL exprRel:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearBool:c IGUAL exprLog:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearBool:c IGUAL NULL
+				{: RESULT = new NodoCrearAsignVar(c,null); :}
 ;
-crearAsignChar ::= crearChar IGUAL LIT_CHAR
-				| crearChar IGUAL IDENTIF
-				| crearChar IGUAL llamarFuncion
-				| crearChar IGUAL elemArreglo
-				| crearChar IGUAL NULL
+crearAsignChar ::= crearChar:c IGUAL LIT_CHAR:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearChar:c IGUAL IDENTIF:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearChar:c IGUAL llamarFuncion:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearChar:c IGUAL elemArreglo:v
+				{: RESULT = new NodoCrearAsignVar(c,v); :}
+				| crearChar:c IGUAL NULL
+				{: RESULT = new NodoCrearAsignVar(c,null); :}
 ;
-crearAsignString ::= crearString IGUAL LIT_STRING
-					| crearString IGUAL IDENTIF
-					| crearString IGUAL NULL
+crearAsignString ::= crearString:c IGUAL LIT_STRING:v
+					{: RESULT = new NodoCrearAsignVar(c,v); :}
+					| crearString:c IGUAL IDENTIF:v
+					{: RESULT = new NodoCrearAsignVar(c,v); :}
+					| crearString:c IGUAL NULL
+					{: RESULT = new NodoCrearAsignVar(c,null); :}
 ;
 
 //3.3	Asignar variables
-asignVar ::= IDENTIF IGUAL valorInt
-			| IDENTIF IGUAL valorFloat
-			| IDENTIF IGUAL LIT_BOOLEANO
-			| IDENTIF IGUAL LIT_CHAR
-			| IDENTIF IGUAL LIT_STRING
-			| IDENTIF IGUAL IDENTIF
-			| IDENTIF IGUAL llamarFuncion
-			| IDENTIF IGUAL elemArreglo
-			| IDENTIF IGUAL expr
-			| IDENTIF IGUAL NULL
-;		
+asignVar ::= IDENTIF:i IGUAL valorInt:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL valorFloat:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL LIT_BOOLEANO:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL LIT_CHAR:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL LIT_STRING:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL IDENTIF:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL llamarFuncion:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL elemArreglo:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL expr:v
+			{: RESULT = new NodoAsignVar(i,v); :}
+			| IDENTIF:i IGUAL NULL
+			{: RESULT = new NodoAsignVar(i,null); :}
+;
 
-asignElemArreg ::= elemArreglo IGUAL valorInt
-				| elemArreglo IGUAL exprBin
-				| elemArreglo IGUAL exprUna
-				| elemArreglo IGUAL LIT_CHAR
-				| elemArreglo IGUAL IDENTIF
-				| elemArreglo IGUAL llamarFuncion
-				| elemArreglo IGUAL elemArreglo
-				| elemArreglo IGUAL NULL
+asignElemArreg ::= elemArreglo:e IGUAL valorInt:v
+				{: RESULT = new NodoAsignElemArreg(e,v); :}
+				| elemArreglo:e IGUAL exprBin:v
+				{: RESULT = new NodoAsignElemArreg(e,v); :}
+				| elemArreglo:e IGUAL exprUna:v
+				{: RESULT = new NodoAsignElemArreg(e,v); :}
+				| elemArreglo:e IGUAL LIT_CHAR:v
+				{: RESULT = new NodoAsignElemArreg(e,v); :}
+				| elemArreglo:e IGUAL IDENTIF:v
+				{: RESULT = new NodoAsignElemArreg(e,v); :}
+				| elemArreglo:e IGUAL llamarFuncion:v
+				{: RESULT = new NodoAsignElemArreg(e,v); :}
+				| elemArreglo:e IGUAL elemArreglo:v
+				{: RESULT = new NodoAsignElemArreg(e,v); :}
+				| elemArreglo:e IGUAL NULL
+				{: RESULT = new NodoAsignElemArreg(e,null); :}
 ;
 
 //3.4	Salida estandar
-salidaEst ::= PRINT PAREN_A valorInt PAREN_C
-			| PRINT PAREN_A valorFloat PAREN_C
-			| PRINT PAREN_A LIT_CHAR PAREN_C
-			| PRINT PAREN_A LIT_STRING PAREN_C
-			| PRINT PAREN_A IDENTIF PAREN_C
-			| PRINT PAREN_A llamarFuncion PAREN_C
-			| PRINT PAREN_A elemArreglo PAREN_C
-			| PRINT PAREN_A exprBin PAREN_C
-			| PRINT PAREN_A exprUna PAREN_C
+salidaEst ::= PRINT PAREN_A valorInt:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A valorFloat:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A LIT_CHAR:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A LIT_STRING:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A IDENTIF:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A llamarFuncion:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A elemArreglo:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A exprBin:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
+			| PRINT PAREN_A exprUna:v PAREN_C
+			{: RESULT = new NodoSalidaEst(v); :}
 ;
 
 //3.5	Return
-sentenciaReturn ::= RETURN valorInt
-				| RETURN valorFloat
-				| RETURN LIT_CHAR
-				| RETURN IDENTIF
-				| RETURN llamarFuncion
-				| RETURN elemArreglo
-				| RETURN exprBin
-				| RETURN exprUna
+sentenciaReturn ::= RETURN valorInt:v
+				{: RESULT = new NodoReturn(v); :}
+				| RETURN valorFloat:v
+				{: RESULT = new NodoReturn(v); :}
+				| RETURN LIT_CHAR:v
+				{: RESULT = new NodoReturn(v); :}
+				| RETURN IDENTIF:v
+				{: RESULT = new NodoReturn(v); :}
+				| RETURN llamarFuncion:v
+				{: RESULT = new NodoReturn(v); :}
+				| RETURN elemArreglo:v
+				{: RESULT = new NodoReturn(v); :}
+				| RETURN exprBin:v
+				{: RESULT = new NodoReturn(v); :}
+				| RETURN exprUna:v
+				{: RESULT = new NodoReturn(v); :}
 ;
 
+
 //4		Estructuras de control
-estrucControl ::= if
-				| while
-				| switch
+estrucControl ::= if:i
+				{: RESULT = i; :}
+				| while:w
+				{: RESULT = w; :}
+				| switch:s
+				{: RESULT = s; :}
 ;
-condicion ::= LIT_BOOLEANO
-			| IDENTIF
-			| exprRel
-			| exprLog
+condicion ::= LIT_BOOLEANO:c
+			{: RESULT = new NodoCondicion(c); :}
+			| IDENTIF:c
+			{: RESULT = new NodoCondicion(c); :}
+			| exprRel:c
+			{: RESULT = new NodoCondicion(c); :}
+			| exprLog:c
+			{: RESULT = new NodoCondicion(c); :}
 ;
 
 //4.1	If
-if ::= IF PAREN_A condicion PAREN_C CURS_A bloqueCod CURS_C
-	| IF PAREN_A condicion PAREN_C CURS_A bloqueCod CURS_C ELSE CURS_A bloqueCod CURS_C
+if ::= IF PAREN_A condicion:c PAREN_C CURS_A bloqueCod:b CURS_C
+	{: RESULT = new NodoEstrucIf(c,b); :}
+	| IF PAREN_A condicion:c PAREN_C CURS_A bloqueCod:b1 CURS_C ELSE CURS_A bloqueCod:b2 CURS_C
+	{: RESULT = new NodoEstrucIfElse(c,b1,b2); :}
 ;
 
 //4.2	While
-while ::= WHILE PAREN_A condicion PAREN_C CURS_A bloqueCod CURS_C;
+while ::= WHILE PAREN_A condicion:c PAREN_C CURS_A bloqueCod:b CURS_C
+		{: RESULT = new NodoEstrucWhile(c,b); :}
+;
 
 //4.3	Switch
-switch ::= SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosInt casoDefault CURS_C
-		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosFloat casoDefault CURS_C
-		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosBool casoDefault CURS_C
-		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosChar casoDefault CURS_C
-		| SWITCH PAREN_A IDENTIF PAREN_C CURS_A casosString casoDefault CURS_C
+switch ::= SWITCH PAREN_A IDENTIF:i PAREN_C CURS_A casosInt:c casoDefault:d CURS_C
+		{: RESULT = new NodoEstrucSwitch(i,"int",c,d); :}
+		| SWITCH PAREN_A IDENTIF:i PAREN_C CURS_A casosFloat:c casoDefault:d CURS_C
+		{: RESULT = new NodoEstrucSwitch(i,"float",c,d); :}
+		| SWITCH PAREN_A IDENTIF:i PAREN_C CURS_A casosBool:c casoDefault:d CURS_C
+		{: RESULT = new NodoEstrucSwitch(i,"boolean",c,d); :}
+		| SWITCH PAREN_A IDENTIF:i PAREN_C CURS_A casosChar:c casoDefault:d CURS_C
+		{: RESULT = new NodoEstrucSwitch(i,"char",c,d); :}
+		| SWITCH PAREN_A IDENTIF:i PAREN_C CURS_A casosString:c casoDefault:d CURS_C
+		{: RESULT = new NodoEstrucSwitch(i,"String",c,d); :}
 ;
 
-casosInt ::= CASE LIT_ENTERO DOSPUNTOS bloqueCod
-			| CASE LIT_ENTERO DOSPUNTOS bloqueCod casosInt
+casosInt ::= CASE LIT_ENTERO:c DOSPUNTOS bloqueCod:b
+			{: RESULT = new NodoCasosInt(c,b); :}
+			| CASE LIT_ENTERO:c DOSPUNTOS bloqueCod:b casosInt:n
+			{: RESULT = new NodoCasosInt(c,b,n); :}
 ;
-casosFloat ::= CASE LIT_FLOTANTE DOSPUNTOS bloqueCod
-			| CASE LIT_FLOTANTE DOSPUNTOS bloqueCod casosFloat
+casosFloat ::= CASE LIT_FLOTANTE:c DOSPUNTOS bloqueCod:b
+			{: RESULT = new NodoCasosFloat(c,b); :}
+			| CASE LIT_FLOTANTE:c DOSPUNTOS bloqueCod:b casosFloat:n
+			{: RESULT = new NodoCasosFloat(c,b,n); :}
 ;
-casosBool ::= CASE LIT_BOOLEANO DOSPUNTOS bloqueCod
-			| CASE LIT_BOOLEANO DOSPUNTOS bloqueCod casosBool
+casosBool ::= CASE LIT_BOOLEANO:c DOSPUNTOS bloqueCod:b
+			{: RESULT = new NodoCasosBool(c,b); :}
+			| CASE LIT_BOOLEANO:c DOSPUNTOS bloqueCod:b casosBool:n
+			{: RESULT = new NodoCasosBool(c,b,n); :}
 ;
-casosChar ::= CASE LIT_CHAR DOSPUNTOS bloqueCod
-			| CASE LIT_CHAR DOSPUNTOS bloqueCod casosChar
+casosChar ::= CASE LIT_CHAR:c DOSPUNTOS bloqueCod:b
+			{: RESULT = new NodoCasosChar(c,b); :}
+			| CASE LIT_CHAR:c DOSPUNTOS bloqueCod:b casosChar:n
+			{: RESULT = new NodoCasosChar(c,b,n); :}
 ;
-casosString ::= CASE LIT_STRING DOSPUNTOS bloqueCod
-			| CASE LIT_STRING DOSPUNTOS bloqueCod casosString
+casosString ::= CASE LIT_STRING:c DOSPUNTOS bloqueCod:b
+			{: RESULT = new NodoCasosString(c,b); :}
+			| CASE LIT_STRING:c DOSPUNTOS bloqueCod:b casosString:n
+			{: RESULT = new NodoCasosString(c,b,n); :}
 ;
 
-casoDefault ::= DEFAULT DOSPUNTOS bloqueCod;
+casoDefault ::= DEFAULT DOSPUNTOS bloqueCod:b
+			{: RESULT = new NodoCasoDefault(b); :}
+;
 
 
 //5		Expresiones
-expr ::= exprBin
-		| exprUna
-		| exprRel
-		| exprLog
+expr ::= exprBin:e
+		{: RESULT = e; :}
+		| exprUna:e
+		{: RESULT = e; :}
+		| exprRel:e
+		{: RESULT = e; :}
+		| exprLog:e
+		{: RESULT = e; :}
 ;
 
 //5.1	Expresiones arit binarias
-exprBin ::= operandoBin operadorBin operandoBin;
+exprBin ::= operandoBin:o1 operadorBin:p operandoBin:o2
+			{: RESULT = new NodoExprBin(o1,o2,p); :}
+;
 
 operadorBin ::= MAS
+			{: RESULT = new NodoOperadorBin("+"); :}
 			| MENOS
+			{: RESULT = new NodoOperadorBin("-"); :}
 			| DIV
+			{: RESULT = new NodoOperadorBin("/"); :}
 			| POR
+			{: RESULT = new NodoOperadorBin("*"); :}
 			| COMPLEMENTO
+			{: RESULT = new NodoOperadorBin("%"); :}
 			| POTENCIA
+			{: RESULT = new NodoOperadorBin("^"); :}
 ;
-operandoBin ::= valorInt
-			| valorFloat
-			| IDENTIF
-			| llamarFuncion
-			| elemArreglo
-			| exprBin 
-			| exprUna
-			| PAREN_A exprBin PAREN_C
+operandoBin ::= valorInt:v
+			{: RESULT = v; :}
+			| valorFloat:v
+			{: RESULT = v; :}
+			| IDENTIF:v
+			{: RESULT = v; :}
+			| llamarFuncion:v
+			{: RESULT = v; :}
+			| elemArreglo:v
+			{: RESULT = v; :}
+			| exprBin:v
+			{: RESULT = v; :}
+			| exprUna:v
+			{: RESULT = v; :}
+			| PAREN_A exprBin:v PAREN_C
+			{: RESULT = v; :}
 ;
 
 //5.2	Expresiones arit unarias
-exprUna ::= operandoUna operadorUna
-		| MENOS operandoUna
+exprUna ::= operandoUna:o operadorUna:p
+		{: RESULT = new NodoExprUna(o,p); :}
+		| MENOS operandoUna:o
+		{: RESULT = new NodoExprUna(o,new NodoOperadorUna("-")); :}
 		%prec MENOS_UNARIO
-		| MENOS valorFloat
+		| MENOS valorFloat:o
+		{: RESULT = new NodoExprUna(o,new NodoOperadorUna("-")); :}
 		%prec MENOS_UNARIO
 ;
 operadorUna ::= MENOSMENOS
+			{: RESULT = new NodoOperadorUna("--"); :}
 			| MASMAS
+			{: RESULT = new NodoOperadorUna("++"); :}
 ;
-operandoUna ::= valorInt
-			| IDENTIF
-			| llamarFuncion
-			| elemArreglo
-			| PAREN_A exprBin PAREN_C
+operandoUna ::= valorInt:v
+			{: RESULT = v; :}
+			| IDENTIF:v
+			{: RESULT = v; :}
+			| llamarFuncion:v
+			{: RESULT = v; :}
+			| elemArreglo:v
+			{: RESULT = v; :}
+			| PAREN_A exprBin:v PAREN_C
+			{: RESULT = v; :}
 ;
 
 //5.3	Expresiones relacionales
-exprRel ::= operandoRel operadorRel operandoRel
-			| operandoRel operadorRel operandoLog
-			| operandoLog operadorRel operandoRel
-			| operandoLog operadorRel operandoLog
+exprRel ::= operandoRel:o1 operadorRel:p operandoRel:o2
+			{: RESULT = new NodoExprRel(o1,o2,p); :}
+			| operandoRel:o1 operadorRel:p operandoLog:o2
+			{: RESULT = new NodoExprRel(o1,o2,p); :}
+			| operandoLog:o1 operadorRel:p operandoRel:o2
+			{: RESULT = new NodoExprRel(o1,o2,p); :}
+			| operandoLog:o1 operadorRel:p operandoLog:o2
+			{: RESULT = new NodoExprRel(o1,o2,p); :}
 ;
 operadorRel ::= MAYOR
+			{: RESULT = new NodoOperadorRel(">"); :}
 			| MENOR
+			{: RESULT = new NodoOperadorRel("<"); :}
 			| MAYORIGUAL
+			{: RESULT = new NodoOperadorRel(">="); :}
 			| MENORIGUAL
+			{: RESULT = new NodoOperadorRel("<="); :}
 			| ESIGUAL
+			{: RESULT = new NodoOperadorRel("=="); :}
 			| DIFERENTE
+			{: RESULT = new NodoOperadorRel("!="); :}
 ;
-operandoRel ::= valorInt
-			| valorFloat
-			| llamarFuncion
-			| elemArreglo
-			| PAREN_A exprBin PAREN_C
-			| exprUna
+operandoRel ::= valorInt:v
+			{: RESULT = v; :}
+			| valorFloat:v
+			{: RESULT = v; :}
+			| llamarFuncion:v
+			{: RESULT = v; :}
+			| elemArreglo:v
+			{: RESULT = v; :}
+			| PAREN_A exprBin:v PAREN_C
+			{: RESULT = v; :}
+			| exprUna:v
+			{: RESULT = v; :}
 			| NULL
+			{: RESULT = null; :}
 ;
 
 //5.4	Expresiones logicas
-exprLog ::= operandoLog operadorLog operandoLog
-		| NOT LIT_BOOLEANO
-		| NOT IDENTIF
-		| NOT PAREN_A exprRel PAREN_C
-		| NOT PAREN_A exprLog PAREN_C
+exprLog ::= operandoLog:o1 operadorLog:p operandoLog:o2
+		{: RESULT = new NodoExprLog(o1,o2,p); :}
+		| NOT LIT_BOOLEANO:o
+		{: RESULT = new NodoExprLog(o,new NodoOperadorLog("!")); :}
+		| NOT IDENTIF:o
+		{: RESULT = new NodoExprLog(o,new NodoOperadorLog("!")); :}
+		| NOT PAREN_A exprRel:o PAREN_C
+		{: RESULT = new NodoExprLog(o,new NodoOperadorLog("!")); :}
+		| NOT PAREN_A exprLog:o PAREN_C
+		{: RESULT = new NodoExprLog(o,new NodoOperadorLog("!")); :}
 ;
 operadorLog ::= AND
+			{: RESULT = new NodoOperadorLog("&"); :}
 			| OR
+			{: RESULT = new NodoOperadorLog("|"); :}
 ;
-operandoLog ::= LIT_BOOLEANO
-			| IDENTIF
-			| exprRel
-			| exprLog
-			| PAREN_A exprRel PAREN_C
-			| PAREN_A exprLog PAREN_C
+operandoLog ::= LIT_BOOLEANO:v
+			{: RESULT = v; :}
+			| IDENTIF:v
+			{: RESULT = v; :}
+			| exprRel:v
+			{: RESULT = v; :}
+			| exprLog:v
+			{: RESULT = v; :}
+			| PAREN_A exprRel:v PAREN_C
+			{: RESULT = v; :}
+			| PAREN_A exprLog:v PAREN_C
+			{: RESULT = v; :}
 ;
+
 
 //6		Tipos y valores
 tipoFun ::= TIPO_INT
+		{: RESULT = "int"; :}
 		| TIPO_FLOAT
+		{: RESULT = "float"; :}
 		| TIPO_CHAR
+		{: RESULT = "char"; :}
 ;
-elemArreglo ::= IDENTIF CUAD_A LIT_ENTERO CUAD_C
+elemArreglo ::= IDENTIF:i CUAD_A LIT_ENTERO:p CUAD_C
+				{: RESULT = new NodoElemArreg(i,p); :}
 ;
 
-valorInt ::=  LIT_ENTERO
+valorInt ::= LIT_ENTERO:v
+			{: RESULT = new NodoValorInt(v); :}
 			| entradaEstInt
+			{: RESULT = new NodoValorInt(); :}
 ;
 entradaEstInt ::= READ_INT PAREN_A PAREN_C
 ;
 
-valorFloat ::= LIT_FLOTANTE
+valorFloat ::= LIT_FLOTANTE:v
+			{: RESULT = new NodoValorFloat(v); :}
 			| entradaEstFloat
+			{: RESULT = new NodoValorFloat(); :}
 ;
 entradaEstFloat ::= READ_FLOAT PAREN_A PAREN_C
 ;
