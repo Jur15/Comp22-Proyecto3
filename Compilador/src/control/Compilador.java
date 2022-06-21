@@ -4,6 +4,7 @@ import analisis.Lexer;
 import analisis.Parser;
 import analisis.Semantico;
 import analisis.TablaSimbolos;
+import generacion.Generador3D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -27,9 +28,13 @@ public class Compilador {
                 Parser p = new Parser(new Lexer(new BufferedReader(new FileReader(archivo))));
                 p.parse();
                 TablaSimbolos tabla = new TablaSimbolos();
+                
                 Semantico s = new Semantico(p.raiz, tabla);
                 s.validar();
                 System.out.println("\nEl archivo se puede compilar.");
+                
+                Generador3D gen3D = new Generador3D(p.raiz, tabla);
+                gen3D.generar();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }

@@ -10,7 +10,9 @@ public class DetalleVariable {
 
     public TipoCompuesto tipo;
     public Object valor;
+    
     public int offsetMemoria;
+    public String label;
 
     public DetalleVariable(TipoCompuesto tipo, int offsetMemoria) {
         this.tipo = tipo;
@@ -20,6 +22,7 @@ public class DetalleVariable {
         } else {
             valor = null;
         }
+        this.label = "";
     }
 
 }

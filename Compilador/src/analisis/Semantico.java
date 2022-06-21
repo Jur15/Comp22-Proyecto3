@@ -64,7 +64,7 @@ public class Semantico {
         bloqueAct = "main";
         bloquesAlcanzables.add(bloqueAct);
         tabla.agregarBloque(bloqueAct);
-        
+
         validarBloqueCod(n.bloqueCod);
     }
 
@@ -178,28 +178,67 @@ public class Semantico {
     private void validarCrearAsignVar(NodoCrearAsignVar n) throws SemanticException {
         //Valida la creacion
         validarCrearVar(n.nodoCrear);
+        DetalleVariable detVar = tabla.getDetalleVariable(bloquesAlcanzables, n.nodoCrear.id.id); //Obtiene el detalle de la variable
+        //Valida que el tipo de la variable no sea un arreglo
+        if (detVar.tipo.esArray) {
+            throw new SemanticException("No se puede asignar un valor a una variable de tipo arreglo.");
+        }
         //Valida que el tipo del valor sea el mismo que la variable
         TipoCompuesto tipoValor = calcularTipoValor(n.valor);
-        if (!n.nodoCrear.tipo.equals(tipoValor)) {
-            throw new SemanticException("El tipo de la variable es diferente al del valor asignado.");
+        if (tipoValor != null) {
+            if (!n.nodoCrear.tipo.equals(tipoValor)) {
+                throw new SemanticException("El tipo de la variable es diferente al del valor asignado.");
+            }
+            //Guarda el valor en la tabla de simbolos
+            detVar.valor = n.valor;
+        } else {
+            //El valor es null por lo que guarda el valor default
+            if (detVar.tipo.tipo.equals("int")) {
+                detVar.valor = 0;
+            } else if (detVar.tipo.tipo.equals("float")) {
+                detVar.valor = 0.0f;
+            } else if (detVar.tipo.tipo.equals("boolean")) {
+                detVar.valor = 0;
+            } else if (detVar.tipo.tipo.equals("char")) {
+                detVar.valor = '0';
+            } else if (detVar.tipo.tipo.equals("String")) {
+                detVar.valor = "";
+            }
         }
-        //Guarda el valor en la tabla de simbolos
-        DetalleVariable detVar = tabla.getDetalleVariable(bloquesAlcanzables, n.nodoCrear.id.id);
-        detVar.valor = n.valor;
+
     }
 
     private void validarAsignVar(NodoAsignVar n) throws SemanticException {
         String nombreVar = n.id.id;
         if (tabla.existeVar(bloquesAlcanzables, nombreVar)) {
-            //Obtiene los detalles de la variable
-            DetalleVariable detVar = tabla.getDetalleVariable(bloquesAlcanzables, nombreVar);
+            DetalleVariable detVar = tabla.getDetalleVariable(bloquesAlcanzables, nombreVar); //Obtiene los detalles de la variable
+            //Valida que el tipo de la variable no sea un arreglo
+            if (detVar.tipo.esArray) {
+                throw new SemanticException("No se puede asignar un valor a una variable de tipo arreglo.");
+            }
             //Valida que el tipo del valor sea el mismo que la variable
             TipoCompuesto tipoValor = calcularTipoValor(n.valor);
-            if (!detVar.tipo.equals(tipoValor)) {
-                throw new SemanticException("El tipo de la variable es diferente al del valor asignado.");
+            if (tipoValor != null) {
+                if (!detVar.tipo.equals(tipoValor)) {
+                    throw new SemanticException("El tipo de la variable es diferente al del valor asignado.");
+                }
+                //Guarda el valor en la tabla de simbolos
+                detVar.valor = n.valor;
+            } else {
+                //El valor es null por lo que guarda el valor default
+                if (detVar.tipo.tipo.equals("int")) {
+                    detVar.valor = 0;
+                } else if (detVar.tipo.tipo.equals("float")) {
+                    detVar.valor = 0.0f;
+                } else if (detVar.tipo.tipo.equals("boolean")) {
+                    detVar.valor = 0;
+                } else if (detVar.tipo.tipo.equals("char")) {
+                    detVar.valor = '0';
+                } else if (detVar.tipo.tipo.equals("String")) {
+                    detVar.valor = "";
+                }
             }
-            //Guarda el valor en la tabla de simbolos
-            detVar.valor = n.valor;
+
         } else {
             throw new SemanticException("La variable " + nombreVar + "no está definida.");
         }
@@ -209,9 +248,22 @@ public class Semantico {
         //Valida que el arreglo exista y que el tipo del valor asignado sea el del arreglo
         TipoCompuesto tipoElemArreg = calcularTipoValor(n.elemento);
         TipoCompuesto tipoValor = calcularTipoValor(n.valor);
-        if (tipoElemArreg.equals(tipoValor)) {
-            //Guarda el valor en la tabla de simbolos, en la posicion especificada
-            DetalleVariable detVar = tabla.getDetalleVariable(bloquesAlcanzables, n.elemento.id.id);
+        boolean tipoNulo = tipoValor != null;
+        if (!tipoNulo) {
+            if (!tipoElemArreg.equals(tipoValor)) {
+                throw new SemanticException("El tipo del valor es diferente al tipo del arreglo.");
+            }
+        }
+        //Guarda el valor en la tabla de simbolos, en la posicion especificada
+        DetalleVariable detVar = tabla.getDetalleVariable(bloquesAlcanzables, n.elemento.id.id);
+        if (tipoNulo) {
+            //El valor es null por lo que guarda el valor default
+            if (tipoElemArreg.tipo.equals("int")) {
+                ((ArrayList<Object>) detVar.valor).set(n.elemento.posicion, 0);
+            } else {
+                ((ArrayList<Object>) detVar.valor).set(n.elemento.posicion, '0');
+            }
+        } else {
             ((ArrayList<Object>) detVar.valor).set(n.elemento.posicion, n.valor);
         }
 
@@ -456,6 +508,9 @@ public class Semantico {
 
     //---Valores---
     private TipoCompuesto calcularTipoValor(Object n) throws SemanticException {
+        if (n == null) {
+            return null;
+        }
         if (n instanceof NodoValorInt) {
             return new TipoCompuesto("int");
         } else if (n instanceof NodoValorFloat) {

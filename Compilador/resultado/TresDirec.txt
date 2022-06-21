@@ -1,0 +1,12 @@
+main_begin:
+stack_space -8
+stack_0 = 0
+t0 = 3
+stack_4 = t0
+t0 = stack_4
+t1 = 1
+t2 = t0 - t1
+stack_0 = t2
+exit_program
+main_end
+
