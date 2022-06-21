@@ -1,19 +1,21 @@
 package analisis.arbolSintactico;
 
+import informacion.TipoIdentificador;
+
 /**
  *
  * @author moral
  */
 public class NodoLlamarFuncion extends NodoSintactico {
-    public String id;
+    public TipoIdentificador id;
     public NodoParametros parametros;
 
-    public NodoLlamarFuncion(String id) {
+    public NodoLlamarFuncion(TipoIdentificador id) {
         this.id = id;
         this.parametros = null;
     }
     
-    public NodoLlamarFuncion(String id, NodoParametros parametros) {
+    public NodoLlamarFuncion(TipoIdentificador id, NodoParametros parametros) {
         this.id = id;
         this.parametros = parametros;
     }

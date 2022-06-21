@@ -1,6 +1,7 @@
 package analisis;
 import java_cup.runtime.*;
 import analisis.excepcion.LexicalException;
+import informacion.TipoIdentificador;
 
 %%
 
@@ -123,8 +124,8 @@ CaracterChar = [^\r\n\'\\]
 	{Flotante}	{return symbol(ParserSym.LIT_FLOTANTE, Float.valueOf(yytext()));}
 	
 	//-Booleanos
-	"true"		{return symbol(ParserSym.LIT_BOOLEANO, true);}
-	"false"		{return symbol(ParserSym.LIT_BOOLEANO, false);}
+	"true"		{return symbol(ParserSym.LIT_BOOLEANO, Boolean.valueOf(true));}
+	"false"		{return symbol(ParserSym.LIT_BOOLEANO, Boolean.valueOf(false));}
 	
 	//-Chars (Cambio de seccion)
 	\' 			{yybegin(CHAR);}
@@ -133,7 +134,7 @@ CaracterChar = [^\r\n\'\\]
 	\" 			{yybegin(STRING); string.setLength(0);}
 	
 	//Identificador
-	{Identificador} 	{return symbol(ParserSym.IDENTIF, yytext());}
+	{Identificador} 	{return symbol(ParserSym.IDENTIF, new TipoIdentificador(yytext()));}
 	
 	//Comentarios
 	{Comentario}		{ /* Ignorar */ }
@@ -164,33 +165,42 @@ CaracterChar = [^\r\n\'\\]
 
 <CHAR> {
 	{CaracterChar}\'	{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, yytext().charAt(0));}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf(yytext().charAt(0)));}
 	
 	//Secuencias de escape de caracteres
 	"\\b"\'				{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\b');}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\b'));}
 	"\\t"\'				{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\t');}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\t'));}
 	"\\n"\'				{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\n');}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\n'));}
 	"\\f"\'				{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\f');}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\f'));}
 	"\\r"\'				{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\r');}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\r'));}
 	"\\\""\'			{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\"');}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\"'));}
 	"\\'"\'				{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\'');}	
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\''));}	
 	"\\\\"\'			{yybegin(YYINITIAL);
-						 return symbol(ParserSym.LIT_CHAR, '\\');}
+						 return symbol(ParserSym.LIT_CHAR,
+						 Character.valueOf('\\'));}
 
 	//Errores
-	\\.	{throw new RuntimeException("Secuencia de escape ilegal <" + yytext() + ">");}
-	{FinLinea}	{throw new RuntimeException("Literal caracter incompleto al final de linea");}
+	\\.	{throw new LexicalException("Secuencia de escape ilegal <" + yytext() + ">");}
+	{FinLinea}	{throw new LexicalException("Literal caracter incompleto al final de linea");}
 }
 
 //Error: caracter invalido
-[^]		{throw new RuntimeException("Caracter ilegal <" + yytext() + "> en la linea " + (yyline+1));}
+[^]		{throw new LexicalException("Caracter ilegal <" + yytext() + "> en la linea " + (yyline+1));}
 
 //Fin del archivo
 <<EOF>>					{return symbol(ParserSym.EOF);}

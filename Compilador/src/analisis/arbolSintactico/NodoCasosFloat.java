@@ -9,13 +9,13 @@ public class NodoCasosFloat extends NodoSintactico {
     public NodoBloqueCod bloque;
     public NodoCasosFloat nodoCasos;
     
-    public NodoCasosFloat(float caso, NodoBloqueCod bloque) {
+    public NodoCasosFloat(Float caso, NodoBloqueCod bloque) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = null;
     }
 
-    public NodoCasosFloat(float caso, NodoBloqueCod bloque, NodoCasosFloat nodoCasos) {
+    public NodoCasosFloat(Float caso, NodoBloqueCod bloque, NodoCasosFloat nodoCasos) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = nodoCasos;

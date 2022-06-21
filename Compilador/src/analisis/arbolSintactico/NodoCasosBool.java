@@ -9,13 +9,13 @@ public class NodoCasosBool extends NodoSintactico {
     public NodoBloqueCod bloque;
     public NodoCasosBool nodoCasos;
 
-    public NodoCasosBool(boolean caso, NodoBloqueCod bloque) {
+    public NodoCasosBool(Boolean caso, NodoBloqueCod bloque) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = null;
     }
 
-    public NodoCasosBool(boolean caso, NodoBloqueCod bloque, NodoCasosBool nodoCasos) {
+    public NodoCasosBool(Boolean caso, NodoBloqueCod bloque, NodoCasosBool nodoCasos) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = nodoCasos;

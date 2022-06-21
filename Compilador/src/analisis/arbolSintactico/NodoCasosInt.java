@@ -9,13 +9,13 @@ public class NodoCasosInt extends NodoSintactico {
     public NodoBloqueCod bloque;
     public NodoCasosInt nodoCasos;
 
-    public NodoCasosInt(int caso, NodoBloqueCod bloque) {
+    public NodoCasosInt(Integer caso, NodoBloqueCod bloque) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = null;
     }
 
-    public NodoCasosInt(int caso, NodoBloqueCod bloque, NodoCasosInt nodoCasos) {
+    public NodoCasosInt(Integer caso, NodoBloqueCod bloque, NodoCasosInt nodoCasos) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = nodoCasos;

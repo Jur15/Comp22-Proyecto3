@@ -8,7 +8,7 @@ public class NodoValorFloat extends NodoSintactico {
     public float valor;
     public boolean esEntradaEst;
 
-    public NodoValorFloat(float valor) {
+    public NodoValorFloat(Float valor) {
         this.valor = valor;
         this.esEntradaEst = false;
     }

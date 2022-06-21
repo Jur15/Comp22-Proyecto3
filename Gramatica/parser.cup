@@ -1,6 +1,7 @@
 package analisis;
 import java_cup.runtime.*;
 import analisis.arbolSintactico.*;
+import informacion.TipoIdentificador;
 
 class Parser;
 
@@ -38,12 +39,12 @@ terminal MENOS_UNARIO;
 //-Literales
 terminal Integer LIT_ENTERO;
 terminal Float LIT_FLOTANTE;
-terminal boolean LIT_BOOLEANO;
-terminal char LIT_CHAR;
+terminal Boolean LIT_BOOLEANO;
+terminal Character LIT_CHAR;
 terminal String LIT_STRING;
 
 //-Identificador
-terminal String IDENTIF;
+terminal TipoIdentificador IDENTIF;
 
 
 //----No terminales----

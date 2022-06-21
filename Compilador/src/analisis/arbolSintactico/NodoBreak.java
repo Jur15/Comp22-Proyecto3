@@ -6,7 +6,10 @@ package analisis.arbolSintactico;
  */
 public class NodoBreak extends NodoSintactico {
 
+    public String bloqueRetorno;
+    
     public NodoBreak() {
+        bloqueRetorno = "";
     }
     
 }

@@ -1,25 +1,23 @@
 package analisis.arbolSintactico;
 
+import informacion.TipoCompuesto;
+import informacion.TipoIdentificador;
+
 /**
  *
  * @author moral
  */
 public class NodoCrearVar extends NodoSintactico {
-    public String tipo, id;
-    public int tamArray;
-    public boolean esArray;
+    public TipoIdentificador id;
+    public TipoCompuesto tipo;
 
-    public NodoCrearVar(String tipo, String id) {
-        this.tipo = tipo;
+    public NodoCrearVar(String tipo, TipoIdentificador id) {
+        this.tipo = new TipoCompuesto(tipo);
         this.id = id;
-        this.tamArray = 0;
-        this.esArray = false;
     }
 
-    public NodoCrearVar(String tipo, String id, int tamArray) {
-        this.tipo = tipo;
+    public NodoCrearVar(String tipo, TipoIdentificador id, Integer tamArray) {
+        this.tipo = new TipoCompuesto(tipo,tamArray);
         this.id = id;
-        this.tamArray = tamArray;
-        this.esArray = true;
     }
 }

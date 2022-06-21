@@ -9,13 +9,13 @@ public class NodoCasosChar extends NodoSintactico {
     public NodoBloqueCod bloque;
     public NodoCasosChar nodoCasos;
 
-    public NodoCasosChar(char caso, NodoBloqueCod bloque) {
+    public NodoCasosChar(Character caso, NodoBloqueCod bloque) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = null;
     }
 
-    public NodoCasosChar(char caso, NodoBloqueCod bloque, NodoCasosChar nodoCasos) {
+    public NodoCasosChar(Character caso, NodoBloqueCod bloque, NodoCasosChar nodoCasos) {
         this.caso = caso;
         this.bloque = bloque;
         this.nodoCasos = nodoCasos;
